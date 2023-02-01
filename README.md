@@ -1,2 +1,2 @@
 # CommonConfigs
-This repository contains configuration files for popular software such as bash, mpd, and ncmpcp. These configs are optimized for a seamless user experience and are designed to enhance productivity and performance.
+This repository contains configuration files for popular software such as bash, mpd, and ncmpcp. These configs are optimized for a seamless user experience and are designed to enhance productivity and performance. Whether you're a seasoned Linux user or just getting started, this repository is a great resource to help you quickly and easily set up your system. With detailed documentation and clear explanations, you'll be up and running in no time. So, if you're looking to optimize your software environment, check out this repository today!
