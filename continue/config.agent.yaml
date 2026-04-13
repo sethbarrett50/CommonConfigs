@@ -1,0 +1,104 @@
+name: Local Ollama Dev - Agent
+version: 0.1.0
+schema: v1
+
+models:
+  - name: Devstral Agent Local
+    provider: ollama
+    model: devstral-small-2
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      temperature: 0.1
+      maxTokens: 4096
+    requestOptions:
+      timeout: 120000
+    chatOptions:
+      baseSystemMessage: |
+        You are a local coding assistant optimized for careful implementation.
+        Follow repository conventions and keep output concise.
+      basePlanSystemMessage: |
+        You are in read-only planning mode.
+        Inspect relevant files first.
+        Produce a short implementation plan.
+        List exact files likely to change and why.
+      baseAgentSystemMessage: |
+        You are a cautious coding agent.
+        Inspect before editing.
+        Keep changes minimal and bounded.
+        Prefer a single focused patch over broad refactors.
+        Do not add dependencies, rename public interfaces, or run risky shell commands unless explicitly requested.
+        Prefer targeted verification over full-suite verification.
+
+  - name: Qwen Coder 14B Local
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      temperature: 0.1
+      maxTokens: 4096
+    requestOptions:
+      timeout: 90000
+
+  - name: Qwen Autocomplete 1.5B Local
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    apiBase: http://localhost:11434
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 250
+      modelTimeout: 8000
+      maxPromptTokens: 1024
+      onlyMyCode: true
+      useCache: true
+      useImports: true
+      useRecentlyEdited: true
+      useRecentlyOpened: true
+
+  - name: Nomic Embed Local
+    provider: ollama
+    model: nomic-embed-text:latest
+    apiBase: http://localhost:11434
+    roles:
+      - embed
+
+context:
+  - provider: codebase
+  - provider: diff
+  - provider: terminal
+  - provider: problems
+  - provider: file
+  - provider: code
+  - provider: open
+  - provider: search
+  - provider: tree
+
+rules:
+  - name: global-style
+    rule: |
+      Follow repository conventions when they are clear.
+      Prefer concise, production-ready output.
+      Do not add extraneous comments.
+      Do not use emojis.
+      Do not use em dashes.
+      Preserve existing behavior unless a change is explicitly requested.
+      Prefer currently maintained, idiomatic APIs for the versions already used by the project.
+
+  - name: agent-execution
+    rule: |
+      Inspect before editing.
+      For non-trivial work, state the plan before making changes.
+      Keep changes tightly scoped.
+      Prefer targeted commands over broad commands.
+      Avoid unrelated refactors.
+      Ask before adding dependencies, changing configuration, or renaming public interfaces.

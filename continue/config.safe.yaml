@@ -1,0 +1,139 @@
+name: Local Ollama Dev - Safe
+version: 0.1.0
+schema: v1
+
+models:
+  - name: Qwen Coder 14B Local
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    defaultCompletionOptions:
+      temperature: 0.1
+      maxTokens: 4096
+    requestOptions:
+      timeout: 90000
+    chatOptions:
+      baseSystemMessage: |
+        You are a careful local coding assistant.
+        Follow repository conventions when they are clear.
+        Prefer concise, production-ready output.
+        Make the smallest change that fully solves the task.
+        Do not add dependencies unless clearly justified.
+        Preserve existing behavior unless a change is explicitly requested.
+      basePlanSystemMessage: |
+        You are a read-only planning assistant.
+        Inspect first, then propose a clear plan.
+        Do not assume you should edit files or run commands.
+        Name the files you would inspect or change and explain why.
+      baseAgentSystemMessage: |
+        You are a cautious coding agent.
+        Inspect before editing.
+        Keep changes tightly scoped.
+        Avoid unrelated refactors or cleanup.
+        Prefer read-only exploration first.
+        If shell commands are needed, prefer the safest minimal command.
+
+  - name: Devstral Agent Local
+    provider: ollama
+    model: devstral-small-2
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+      - edit
+      - apply
+    capabilities:
+      - tool_use
+    defaultCompletionOptions:
+      temperature: 0.1
+      maxTokens: 4096
+    requestOptions:
+      timeout: 120000
+    chatOptions:
+      basePlanSystemMessage: |
+        Read-only exploration first.
+        Produce a short implementation plan before making changes.
+      baseAgentSystemMessage: |
+        Be conservative and systematic.
+        Inspect before editing.
+        Prefer one bounded change at a time.
+
+  - name: Mistral Small Local
+    provider: ollama
+    model: mistral-small:24b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    defaultCompletionOptions:
+      temperature: 0.2
+      maxTokens: 4096
+    requestOptions:
+      timeout: 120000
+  
+  - name: Llama Uncensored
+    provider: ollama
+    model: Hudson/llama3.1-uncensored:8b
+    apiBase: http://localhost:11434
+    roles:
+      - chat
+    requestOptions:
+      timeout: 120000
+
+  - name: Qwen Autocomplete 1.5B Local
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    apiBase: http://localhost:11434
+    roles:
+      - autocomplete
+    autocompleteOptions:
+      debounceDelay: 250
+      modelTimeout: 8000
+      maxPromptTokens: 1024
+      onlyMyCode: true
+      useCache: true
+      useImports: true
+      useRecentlyEdited: true
+      useRecentlyOpened: true
+
+  - name: Nomic Embed Local
+    provider: ollama
+    model: nomic-embed-text:latest
+    apiBase: http://localhost:11434
+    roles:
+      - embed
+
+context:
+  - provider: codebase
+  - provider: diff
+  - provider: problems
+  - provider: file
+  - provider: code
+  - provider: open
+  - provider: search
+  - provider: tree
+
+rules:
+  - name: global-style
+    rule: |
+      Follow repository conventions when they are clear.
+      Prefer concise, production-ready output.
+      Do not add extraneous comments.
+      Do not use emojis.
+      Do not use em dashes.
+      Preserve existing behavior unless a change is explicitly requested.
+      Prefer currently maintained, idiomatic APIs for the versions already used by the project.
+      Make the smallest change that fully solves the task.
+      Reuse existing utilities and patterns before introducing new abstractions.
+      Do not add dependencies unless they are clearly justified.
+      When uncertain, inspect the surrounding code before editing.
+
+  - name: safety-defaults
+    rule: |
+      Prefer read-only exploration before editing.
+      For non-trivial tasks, explain the plan before making changes.
+      Keep changes tightly scoped to the requested task.
+      Do not make unrelated cleanup changes.
+      Avoid broad shell usage when direct file edits are sufficient.
