@@ -1,0 +1,116 @@
+REGISzzTRY ?= ghcr.io
+OWNER    ?= {OWNER_PLACEHOLDER}
+IMAGE_NAME ?= {IMG_NAME_PLACEHOLDER}
+TAG ?= dev
+
+RUNNER_URL ?= https://github.com/{ORG_PLACEHOLDER}
+RUNNER_NAME ?= $(IMAGE_NAME)-local
+RUNNER_LABELS ?= {RUNNER_LABEL_PLACEHOLDER},linux,x64
+RUNNER_EPHEMERAL ?= false
+RUNNER_WORKDIR ?= /workspace
+
+LOCAL_IMAGE := $(IMAGE_NAME):$(TAG)
+REMOTE_IMAGE := $(REGISTRY)/$(OWNER)/$(IMAGE_NAME):$(TAG)
+REMOTE_LATEST := $(REGISTRY)/$(OWNER)/$(IMAGE_NAME):latest
+
+TRIVY_IMAGE ?= aquasec/trivy:latest
+
+
+.PHONY: help build run shell smoke trivy login push push-latest clean runner-token runner-up runner-up-d
+
+help:
+	@echo "Common commands:"
+	@echo "  make build        Build local image ($(LOCAL_IMAGE))"
+	@echo "  make run          Run container with an interactive shell"
+	@echo "  make shell        Alias for run"
+	@echo "  make smoke        Build and run simple smoke test inside container"
+	@echo "  make login        Login to GHCR using \$${GHCR_TOKEN}"
+	@echo "  make push         Build and push $(REMOTE_IMAGE) and $(REMOTE_LATEST)"
+	@echo "  make clean        Remove local image"
+	@echo "  make runner-up     Run as a GitHub Actions runner (auto-fetch token)"
+	@echo "  make runner-up-d   Run as a runner (detached, restart unless-stopped)"
+
+build:
+	@echo "Building $(LOCAL_IMAGE)"
+	docker build --platform linux/amd64 -t $(LOCAL_IMAGE) .
+
+run: build
+	@echo "Running $(LOCAL_IMAGE) with interactive shell"
+	docker run --rm -it $(LOCAL_IMAGE) bash
+
+shell: run
+
+smoke: build
+	@echo "Running smoke tests on $(LOCAL_IMAGE)"
+	docker run --rm $(LOCAL_IMAGE) bash -lc 'set -euo pipefail; \
+	  echo "Checking required tools..."; \
+	  command -v node; \
+	  command -v curl; \
+	  command -v jq; \
+	  command -v wget; \
+	  command -v openssl; \
+	  command -v bash; \
+	  echo "All required tools are present."; \
+	'
+trivy: build
+	@echo "Running Trivy vulnerability scan on $(LOCAL_IMAGE)"
+	@docker run --rm \
+	  -v /var/run/docker.sock:/var/run/docker.sock \
+	  $(TRIVY_IMAGE) image \
+	    --format table \
+	    --vuln-type os,library \
+	    --severity HIGH,CRITICAL \
+	    --ignore-unfixed \
+	    --exit-code 1 \w
+	    $(LOCAL_IMAGE)
+
+login:
+ifndef GHCR_TOKEN
+	$(error GHCR_TOKEN is not set. Run: export GHCR_TOKEN=your-ghcr-token)
+endif
+ifndef OWNER
+	$(error OWNER is not set. Run: export OWNER=your-github-username-or-org)
+endif
+	@echo "Logging in to $(REGISTRY) as $(OWNER)"
+	@echo "$$GHCR_TOKEN" | docker login $(REGISTRY) -u "$(OWNER)" --password-stdin
+
+push: build login
+	@echo "Tagging image $(LOCAL_IMAGE) as:"
+	@echo "  $(REMOTE_IMAGE)"
+	@echo "  $(REMOTE_LATEST)"
+	docker tag $(LOCAL_IMAGE) $(REMOTE_IMAGE)
+	docker tag $(LOCAL_IMAGE) $(REMOTE_LATEST)
+	@echo "Pushing $(REMOTE_IMAGE)"
+	docker push $(REMOTE_IMAGE)
+	@echo "Pushing $(REMOTE_LATEST)"
+	docker push $(REMOTE_LATEST)
+
+r.token: ## Regens token for container
+	@gh api -X POST orgs/{ORG_PLACEHOLDER}/actions/runners/registration-token -q .token
+
+r.up: build ## Runs detached container [run when doing local CI testing]
+	@set -euo pipefail; \
+	TOKEN="$$( $(MAKE) -s r.token )"; \
+	echo "Starting runner (detached) $(RUNNER_NAME) for $(RUNNER_URL)"; \
+	docker run -d \
+	  --platform linux/amd64 \
+	  --name "$(RUNNER_NAME)" \
+	  --restart unless-stopped \
+	  -e RUNNER_URL="$(RUNNER_URL)" \
+	  -e RUNNER_TOKEN="$$TOKEN" \
+	  -e RUNNER_NAME="$(RUNNER_NAME)" \
+	  -e RUNNER_LABELS="$(RUNNER_LABELS)" \
+	  -e RUNNER_EPHEMERAL="$(RUNNER_EPHEMERAL)" \
+	  -e RUNNER_WORKDIR="$(RUNNER_WORKDIR)" \
+	  $(LOCAL_IMAGE)
+
+r.log: ## Watch logs for up container
+	docker logs -f "$(RUNNER_NAME)"
+
+r.down: ## Removes container
+	@echo "Removing runner container $(RUNNER_NAME) (if it exists)"
+	- docker rm -f "$(RUNNER_NAME)" 2>/dev/null || true
+
+r.clean: r.down ## Removes container + image
+	@echo "Removing local image $(LOCAL_IMAGE) (if it exists)"
+	- docker rmi $(LOCAL_IMAGE) 2>/dev/null || true

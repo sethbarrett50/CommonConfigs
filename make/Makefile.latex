@@ -1,0 +1,48 @@
+OUTDIR    := build
+MAIN_TEX  := main.tex
+MAIN_PDF  := $(OUTDIR)/main.pdf
+
+LATEXMK   := latexmk
+LATEXOPTS := -pdf -interaction=nonstopmode -file-line-error -synctex=1 -outdir=$(OUTDIR)
+
+TEX_SOURCES := $(MAIN_TEX) \
+               $(wildcard *.tex) \
+               $(wildcard Definitions/*) \
+               $(wildcard figs/*) \
+               $(wildcard *.bib)
+
+.PHONY: all pdf open clean watch help
+
+help:
+	@echo "Targets:"
+	@echo "  make pdf      Build $(MAIN_PDF)"
+	@echo "  make all      Same as pdf"
+	@echo "  make open     Build and open PDF"
+	@echo "  make clean    Remove build output"
+	@echo "  make watch    Continuous rebuild with latexmk"
+
+all: pdf
+
+pdf: $(MAIN_PDF)
+
+$(MAIN_PDF): $(TEX_SOURCES)
+	@mkdir -p $(OUTDIR)
+	$(LATEXMK) $(LATEXOPTS) $(MAIN_TEX)
+
+open: pdf
+	xdg-open $(MAIN_PDF) >/dev/null 2>&1 &
+
+watch:
+	@mkdir -p $(OUTDIR)
+	$(LATEXMK) -pvc $(LATEXOPTS) $(MAIN_TEX)
+
+clean:
+	$(LATEXMK) -C -outdir=$(OUTDIR)
+	rm -rf $(OUTDIR)
+
+rebuild: clean ## Full rebuild for broken docs
+	mkdir -p build
+	pdflatex -interaction=nonstopmode -file-line-error -synctex=1 -output-directory=build main.tex
+	bibtex build/main
+	pdflatex -interaction=nonstopmode -file-line-error -synctex=1 -output-directory=build main.tex
+	pdflatex -interaction=nonstopmode -file-line-error -synctex=1 -output-directory=build main.tex

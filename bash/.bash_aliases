@@ -1,70 +1,174 @@
-# Alias for opening intelij
-alias idea=/home/stbarre/Desktop/idea-IC-223.8214.52/bin/idea.sh
+# ~/.bash_aliases
+# Common aliases for Debian + Bash + GNOME Terminal + Starship
 
-# alias for improved rm command
-alias rm='rm -iv'
+# --------------------------------------------------
+# Safety / quality-of-life
+# --------------------------------------------------
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -Iv'
+alias mkdir='mkdir -pv'
+alias ln='ln -iv'
 
-# alias for improved ls command
-alias ls='ls -AshCF --color'
+# --------------------------------------------------
+# Colorized core utilities
+# --------------------------------------------------
+alias ls='ls --color=auto'
+alias l='ls -CF --color=auto'
+alias la='ls -A --color=auto'
+alias ll='ls -alFh --color=auto'
+alias lt='ls -alFh --color=auto --sort=time'
+alias lsize='ls -alFhS --color=auto'
 
-# alias for shorter python command
-alias python='python3'
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
 
-# Improved xclip command
-alias xclip="xclip -sel clip"
+alias diff='diff --color=auto'
+alias ip='ip -color=auto'
+alias dmesg='dmesg --color=always'
 
-# Sorted ls command
-alias lss='ls -S'
+# Nav
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias home='cd ~'
+alias desk='cd ~/Desktop'
+alias docs='cd ~/Documents'
+alias dl='cd ~/Downloads'
+alias au='cd ~/au'
 
-# Shorter upgrade command
-alias uu='sudo apt upgrade -y && sudo apt upgrade -y'
+# File listing helpers
+alias lh='ls -d .* --color=auto'
+alias tree='tree -C'
+alias treed='tree -C -d'
+alias cls='clear'
+alias path='printf "%s\n" "${PATH//:/\n}"'
+alias cat="batcat" # sudo cat for reg cat
 
-# Improved gitprune capabilities
-alias gitprune="git fetch -p && for branch in \$(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '\$2 == \"[gone]\" {sub(\"refs/heads/\", \"\", \$1); print \$1}'); do git branch -d \$branch; done"
+# Search helpers
+alias rg='rg --colors=match:fg:yellow'
+alias fhere='find . -iname'
+alias ff='find . -type f | grep'
+alias fd='find . -type d | grep'
 
-# Shortest python command
+# Disk / size / system
+alias df='df -h'
+alias du='du -h'
+alias duh='du -sh ./* ./.??* 2>/dev/null'
+alias free='free -h'
+alias psa='ps auxf'
+alias psg='ps aux | grep -i'
+alias top='top -c'
+
+# Git
+alias g='git'
+alias gs='git status'
+alias ga='git add .'
+alias gc='git commit'
+alias gcm='git commit -a -m'
+alias gp='git push'
+alias gpl='git pull'
+alias gl='git log --oneline --graph --decorate'
+alias gd='git diff'
+alias gco='git checkout'
+alias gb='git branch'
+alias gst='git stash'
+
+# Python / uv / pip / venv
 alias py='python3'
+alias uvr='uv run'
+alias uvs='uv sync'
+alias repl='uvx --with ipython ipython -i -c "import os; clear = lambda: os.system(\"clear\")"'
 
-# Improved wordcount command
-alias wc=/home/stbarre/Scripts/wc.sh
+# Networking
+alias ports='ss -tulpn'
+alias myip='curl -4 ifconfig.me; echo'
+alias pingg='ping google.com'
 
-# Move to the parent folder.
-alias ..='cd ..;pwd'
+# Better defaults for common viewers
+alias less='less -R'
+alias weather='curl wttr.in'
 
-# Move up two parent folders.
-alias ....='cd ../..;pwd'
-
-# Move up three parent folders.
-alias ......='cd ../../..;pwd'
-
-# Press c to clear the terminal screen.
-alias c='clear'
-
-# Press h to view the bash history.
-alias h='history'
-
-# Display the directory structure better.
-alias tree='tree --dirsfirst -F'
-
-# Make a directory and all parent directories with verbosity.
-alias mkdir='mkdir -p -v'
-
-# Head of history
-alias hh='h | head'
-
-# Tail of history
-alias ht='h | tail'
+# Confirmation helpers
+alias please='sudo $(history -p !!)'
 
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+# Handy custom functions
 
+mkcd() {
+    mkdir -p -- "$1" && cd -- "$1"
+}
 
-# Maven Clean Install Alias
-alias mci='mvn clean install'
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"   ;;
+            *.tar.gz)    tar xzf "$1"   ;;
+            *.bz2)       bunzip2 "$1"   ;;
+            *.rar)       unrar x "$1"   ;;
+            *.gz)        gunzip "$1"    ;;
+            *.tar)       tar xf "$1"    ;;
+            *.tbz2)      tar xjf "$1"   ;;
+            *.tgz)       tar xzf "$1"   ;;
+            *.zip)       unzip "$1"     ;;
+            *.Z)         uncompress "$1";;
+            *.7z)        7z x "$1"      ;;
+            *) echo "Cannot extract '$1'" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
 
+up() {
+    local d=""
+    local limit="${1:-1}"
+    for ((i=1; i<=limit; i++)); do
+        d+="../"
+    done
+    cd "$d" || return
+}
 
+showpath() {
+    printf "%s\n" "${PATH//:/\n}"
+}
 
+cdf() {
+    local dir
+    dir=$(find . -not -path '*/.*' -type d -name "*$1*" 2>/dev/null | \
+          fzf --height 40% --reverse --border)
 
+    if [ -n "$dir" ]; then
+        cd "$dir" || return
+    fi
+}
 
+codef() {
+  local dir
+  dir=$(find . -not -path '*/.*' -type d -name "*$1*" 2>/dev/null | fzf --height 40% --reverse --border)
+
+  if [ -n "$dir" ]; then
+    code "$dir" --disable-gpu
+  fi
+}
+
+repo() {
+    if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        cd "$(git rev-parse --show-toplevel)" || return
+    else
+        local project_root="~/code"
+        local selected
+
+        selected=$(find "${project_root:-.}" -maxdepth 2 -name ".git" -type d | \
+                   rev | cut -d/ -f2- | rev | \
+                   fzf --height 40% --reverse --header "Jump to Repository")
+
+        if [ -n "$selected" ]; then
+            cd "$selected" || return
+        else
+            echo "Not in a git repo and no selection made."
+        fi
+    fi
+}
