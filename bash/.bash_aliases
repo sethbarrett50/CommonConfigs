@@ -28,7 +28,9 @@ alias diff='diff --color=auto'
 alias ip='ip -color=auto'
 alias dmesg='dmesg --color=always'
 
-# Nav
+# --------------------------------------------------
+# Navigation
+# --------------------------------------------------
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -39,21 +41,26 @@ alias docs='cd ~/Documents'
 alias dl='cd ~/Downloads'
 alias au='cd ~/au'
 
+# --------------------------------------------------
 # File listing helpers
+# --------------------------------------------------
 alias lh='ls -d .* --color=auto'
 alias tree='tree -C'
 alias treed='tree -C -d'
 alias cls='clear'
 alias path='printf "%s\n" "${PATH//:/\n}"'
-alias cat="batcat" # sudo cat for reg cat
 
+# --------------------------------------------------
 # Search helpers
+# --------------------------------------------------
 alias rg='rg --colors=match:fg:yellow'
 alias fhere='find . -iname'
 alias ff='find . -type f | grep'
 alias fd='find . -type d | grep'
 
+# --------------------------------------------------
 # Disk / size / system
+# --------------------------------------------------
 alias df='df -h'
 alias du='du -h'
 alias duh='du -sh ./* ./.??* 2>/dev/null'
@@ -62,7 +69,9 @@ alias psa='ps auxf'
 alias psg='ps aux | grep -i'
 alias top='top -c'
 
+# --------------------------------------------------
 # Git
+# --------------------------------------------------
 alias g='git'
 alias gs='git status'
 alias ga='git add .'
@@ -76,31 +85,41 @@ alias gco='git checkout'
 alias gb='git branch'
 alias gst='git stash'
 
+# --------------------------------------------------
 # Python / uv / pip / venv
+# --------------------------------------------------
 alias py='python3'
 alias uvr='uv run'
 alias uvs='uv sync'
-alias repl='uvx --with ipython ipython -i -c "import os; clear = lambda: os.system(\"clear\")"'
 
+# --------------------------------------------------
 # Networking
+# --------------------------------------------------
 alias ports='ss -tulpn'
 alias myip='curl -4 ifconfig.me; echo'
 alias pingg='ping google.com'
 
+# --------------------------------------------------
 # Better defaults for common viewers
+# --------------------------------------------------
 alias less='less -R'
 alias weather='curl wttr.in'
 
+# --------------------------------------------------
 # Confirmation helpers
+# --------------------------------------------------
 alias please='sudo $(history -p !!)'
 
-
+# --------------------------------------------------
 # Handy custom functions
+# --------------------------------------------------
 
+# Make a directory and cd into it
 mkcd() {
     mkdir -p -- "$1" && cd -- "$1"
 }
 
+# Extract most common archive formats
 extract() {
     if [ -f "$1" ]; then
         case "$1" in
@@ -122,6 +141,7 @@ extract() {
     fi
 }
 
+# Go up N directories: up 3
 up() {
     local d=""
     local limit="${1:-1}"
@@ -131,15 +151,22 @@ up() {
     cd "$d" || return
 }
 
+# Show the current PATH one entry per line
 showpath() {
     printf "%s\n" "${PATH//:/\n}"
 }
 
+alias cat="batcat"
+alias repl='uvx --with ipython ipython -i -c "import os; clear = lambda: os.system(\"clear\")"'
+
 cdf() {
     local dir
+    # Uses the cleaner logic from codef: 
+    # Ignores hidden paths and searches for the optional argument $1
     dir=$(find . -not -path '*/.*' -type d -name "*$1*" 2>/dev/null | \
           fzf --height 40% --reverse --border)
 
+    # If a directory was selected, change into it
     if [ -n "$dir" ]; then
         cd "$dir" || return
     fi
@@ -171,4 +198,19 @@ repo() {
             echo "Not in a git repo and no selection made."
         fi
     fi
+}
+
+hf() {
+    local query cmd
+
+    query="${1:-}"
+
+    cmd="$(
+        history \
+        | sed 's/^[[:space:]]*[0-9]\+[[:space:]]*//' \
+        | grep -F -- "$query" \
+        | fzf
+    )" || return
+
+    [ -n "$cmd" ] && eval "$cmd"
 }
