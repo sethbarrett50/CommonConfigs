@@ -1,0 +1,39 @@
+{
+  "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/build",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+  "latex-workshop.latex.recipe.default": "lastUsed",
+
+  "latex-workshop.latex.tools": [
+    {
+      "name": "make-pdf",
+      "command": "/usr/bin/make",
+      "args": ["pdf"]
+    },
+    {
+      "name": "make-diagrams",
+      "command": "/usr/bin/make",
+      "args": ["diagrams"]
+    },
+    {
+      "name": "make-watch",
+      "command": "/usr/bin/make",
+      "args": ["watch"]
+    }
+  ],
+
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "Make: pdf",
+      "tools": ["make-pdf"]
+    },
+    {
+      "name": "Make: diagrams",
+      "tools": ["make-diagrams"]
+    },
+    {
+      "name": "Make: watch",
+      "tools": ["make-watch"]
+    }
+  ]
+}

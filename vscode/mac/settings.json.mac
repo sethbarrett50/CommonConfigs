@@ -1,0 +1,29 @@
+{
+  "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/build",
+  "latex-workshop.view.pdf.viewer": "tab",
+  "latex-workshop.latex.autoBuild.run": "onSave",
+
+  "latex-workshop.latex.tools": [
+    {
+      "name": "make-pdf",
+      "command": "/usr/bin/make",
+      "args": ["pdf"],
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    },
+    {
+      "name": "make-diagrams",
+      "command": "/usr/bin/make",
+      "args": ["diagrams"],
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  ],
+
+  "latex-workshop.latex.recipes": [
+    { "name": "Make: pdf (tectonic)", "tools": ["make-pdf"] },
+    { "name": "Make: diagrams (tectonic)", "tools": ["make-diagrams"] }
+  ]
+}
