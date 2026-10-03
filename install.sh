@@ -33,12 +33,12 @@ link "$REPO_DIR/i3/config" "$HOME/.config/i3/config"
 link "$REPO_DIR/picom/picom.conf" "$HOME/.config/picom/picom.conf"
 link "$REPO_DIR/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
 link "$REPO_DIR/rofi/tokyo-neon.rasi" "$HOME/.config/rofi/tokyo-neon.rasi"
-link "$REPO_DIR/mpd/mpd.conf" "$HOME/.config/mpd/mpd.conf"
 link "$REPO_DIR/ncmpcpp/config" "$HOME/.config/ncmpcpp/config"
 
 case "$(uname -s)" in
     Linux*)
         link "$REPO_DIR/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
+        link "$REPO_DIR/mpd/linux/mpd.conf.linux" "$HOME/.config/mpd/mpd.conf"
         if command -v gsettings >/dev/null 2>&1; then
             echo
             echo "GNOME Terminal detected - run these separately (installs packages, needs sudo):"
@@ -48,6 +48,7 @@ case "$(uname -s)" in
         ;;
     Darwin*)
         link "$REPO_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+        link "$REPO_DIR/mpd/mac/mpd.conf.mac" "$HOME/.config/mpd/mpd.conf"
         ;;
 esac
 
