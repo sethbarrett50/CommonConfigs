@@ -36,8 +36,11 @@ link "$REPO_DIR/rofi/tokyo-neon.rasi" "$HOME/.config/rofi/tokyo-neon.rasi"
 link "$REPO_DIR/ncmpcpp/config" "$HOME/.config/ncmpcpp/config"
 
 # mpd.conf points db_file/log_file/pid_file/state_file/playlist_directory at
-# ~/.mpd/* - mpd doesn't create that directory tree itself on first run.
+# ~/.mpd/* - mpd doesn't create that directory tree itself on first run, and
+# won't open db_file unless it already exists either (touch is a no-op on an
+# existing db, so this is safe to re-run without wiping a populated library).
 mkdir -p "$HOME/.mpd/playlists"
+touch "$HOME/.mpd/mpd.db"
 
 case "$(uname -s)" in
     Linux*)
