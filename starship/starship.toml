@@ -1,0 +1,89 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+palette = "tokyo_night"
+add_newline = true
+
+format = """
+${custom.claude_account}\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$rust\
+$golang\
+$cmd_duration\
+$line_break\
+$character"""
+
+right_format = "$time"
+
+[palettes.tokyo_night]
+bg      = "#0b1026"
+surface = "#1a1b36"
+fg      = "#c0caf5"
+muted   = "#565f89"
+blue    = "#7aa2f7"
+cyan    = "#7dcfff"
+green   = "#9ece6a"
+yellow  = "#e0af68"
+purple  = "#bb9af7"
+magenta = "#ff007c"
+red     = "#f7768e"
+
+[custom.claude_account]
+command = "echo 'CLAUDE'"
+when = true
+format = "[ $output ]($style)"
+style = "bg:red fg:bg bold"
+
+[directory]
+style = "fg:cyan bold"
+format = "[ $path]($style) "
+truncation_length = 4
+truncate_to_repo = true
+
+[git_branch]
+style = "fg:purple bold"
+format = "[ $symbol$branch]($style) "
+symbol = " "
+
+[git_status]
+style = "fg:red bold"
+format = "([$all_status$ahead_behind]($style)) "
+
+[python]
+style = "fg:green"
+format = "[ $symbol$version]($style) "
+symbol = " "
+
+[nodejs]
+style = "fg:green"
+format = "[ $symbol$version]($style) "
+symbol = " "
+
+[rust]
+style = "fg:red"
+format = "[ $symbol$version]($style) "
+symbol = " "
+
+[golang]
+style = "fg:blue"
+format = "[ $symbol$version]($style) "
+symbol = " "
+
+[cmd_duration]
+style = "fg:yellow"
+format = "[took $duration]($style) "
+min_time = 2000
+
+[time]
+disabled = false
+style = "fg:muted"
+format = "[$time]($style)"
+time_format = "%H:%M"
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+vimcmd_symbol = "[❮](bold green)"
