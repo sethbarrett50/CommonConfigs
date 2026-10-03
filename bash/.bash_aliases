@@ -2,6 +2,13 @@
 # Common aliases for Debian + Bash + GNOME Terminal + Starship
 
 # --------------------------------------------------
+# fzf (Tokyo Night) - fzf paints its own highlight colors via ANSI
+# codes rather than using the terminal's native text-selection, so the
+# GNOME Terminal profile palette can't theme it; has to be set here.
+# --------------------------------------------------
+export FZF_DEFAULT_OPTS="--color=bg+:#283457,bg:#0b1026,fg:#c0caf5,fg+:#c0caf5,hl:#bb9af7,hl+:#ff007c,info:#565f89,prompt:#7aa2f7,pointer:#ff007c,marker:#9ece6a,spinner:#7aa2f7,header:#565f89,border:#1a1b36"
+
+# --------------------------------------------------
 # Safety / quality-of-life
 # --------------------------------------------------
 alias cp='cp -iv'
