@@ -156,7 +156,7 @@ showpath() {
     printf "%s\n" "${PATH//:/\n}"
 }
 
-alias cat="batcat"
+# alias cat="batcat"
 alias repl='uvx --with ipython ipython -i -c "import os; clear = lambda: os.system(\"clear\")"'
 
 cdf() {
