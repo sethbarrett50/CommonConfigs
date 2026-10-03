@@ -31,4 +31,5 @@ audio_output {
  format "44100:16:2"
  auto_resample "no"
  use_mmap "yes"
+ buffer_time "100000"
 }

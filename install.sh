@@ -35,6 +35,10 @@ link "$REPO_DIR/rofi/config.rasi" "$HOME/.config/rofi/config.rasi"
 link "$REPO_DIR/rofi/tokyo-neon.rasi" "$HOME/.config/rofi/tokyo-neon.rasi"
 link "$REPO_DIR/ncmpcpp/config" "$HOME/.config/ncmpcpp/config"
 
+# mpd.conf points db_file/log_file/pid_file/state_file/playlist_directory at
+# ~/.mpd/* - mpd doesn't create that directory tree itself on first run.
+mkdir -p "$HOME/.mpd/playlists"
+
 case "$(uname -s)" in
     Linux*)
         link "$REPO_DIR/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
