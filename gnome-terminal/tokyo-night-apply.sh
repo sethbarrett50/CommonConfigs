@@ -80,5 +80,42 @@ dconf write "${PROFILE_PATH}default-size-rows" "32"
 
 gsettings set org.gnome.Terminal.ProfilesList default "$UUID"
 
+# The profile's palette only covers the terminal content area - the
+# headerbar/title bar is GTK window chrome and follows the GTK theme
+# instead. Force it dark, then override its color with scoped CSS so it
+# matches the Tokyo Night body instead of the default Adwaita gray/black.
+if gsettings list-keys org.gnome.Terminal.Legacy.Settings 2>/dev/null | grep -q '^theme-variant$'; then
+    gsettings set org.gnome.Terminal.Legacy.Settings theme-variant 'dark'
+fi
+
+GTK_CSS="$HOME/.config/gtk-3.0/gtk.css"
+MARK_BEGIN="/* BEGIN tokyo-night-terminal (managed by tokyo-night-apply.sh) */"
+MARK_END="/* END tokyo-night-terminal */"
+
+mkdir -p "$(dirname "$GTK_CSS")"
+touch "$GTK_CSS"
+if grep -qF "$MARK_BEGIN" "$GTK_CSS"; then
+    awk -v b="$MARK_BEGIN" -v e="$MARK_END" '
+        $0==b {skip=1}
+        skip && $0==e {skip=0; next}
+        !skip {print}
+    ' "$GTK_CSS" > "${GTK_CSS}.tmp"
+    mv "${GTK_CSS}.tmp" "$GTK_CSS"
+fi
+
+cat >> "$GTK_CSS" <<CSS
+$MARK_BEGIN
+.terminal-window headerbar {
+    background-color: #0b1026;
+    background-image: none;
+    color: #c0caf5;
+    box-shadow: none;
+}
+.terminal-window headerbar button {
+    color: #c0caf5;
+}
+$MARK_END
+CSS
+
 echo "Done. '$PROFILE_NAME' is now the default GNOME Terminal profile."
-echo "Open a new terminal window/tab to see it."
+echo "Fully quit GNOME Terminal (not just close the window - all windows/processes) and reopen it for the headerbar CSS to take effect."
