@@ -118,6 +118,11 @@ headerbar.titlebar button {
     box-shadow: none;
     color: #c0caf5;
 }
+header.top {
+    background-color: #0b1026;
+    background-image: none;
+    box-shadow: none;
+}
 $MARK_END
 CSS
 
