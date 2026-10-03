@@ -33,7 +33,7 @@ red     = "#f7768e"
 
 [custom.claude_account]
 command = "echo 'CLAUDE'"
-when = true
+when = '[ "$(id -un)" = "claude" ]'
 format = "[ $output ]($style)"
 style = "bg:red fg:bg bold"
 
