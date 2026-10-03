@@ -38,23 +38,26 @@ link "$REPO_DIR/ncmpcpp/config" "$HOME/.config/ncmpcpp/config"
 
 case "$(uname -s)" in
     Linux*)
-        link "$REPO_DIR/vscode/linux/settings.json.linux" "$HOME/.config/Code/User/settings.json"
+        link "$REPO_DIR/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
         if command -v gsettings >/dev/null 2>&1; then
             echo
-            echo "GNOME Terminal detected - run this separately to install the Tokyo Night profile:"
-            echo "  bash $REPO_DIR/gnome-terminal/tokyo-night-apply.sh"
+            echo "GNOME Terminal detected - run these separately (installs packages, needs sudo):"
+            echo "  bash $REPO_DIR/gnome-terminal/tokyo-night-apply.sh   # terminal profile + starship"
+            echo "  bash $REPO_DIR/gtk-theme/apply-tokyonight-theme.sh  # system-wide GTK/Shell theme"
         fi
         ;;
     Darwin*)
-        link "$REPO_DIR/vscode/mac/settings.json.mac" "$HOME/Library/Application Support/Code/User/settings.json"
+        link "$REPO_DIR/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
         ;;
 esac
 
 echo
 echo "Not symlinked (copy manually, they need per-project/per-mode choices):"
-echo "  - continue/*        (pick config.agent.yaml or config.safe.yaml -> ~/.continue/config.yaml)"
-echo "  - make/Makefile.*   (per-project build templates)"
-echo "  - wallpapers/       (set via your DE's wallpaper tool)"
+echo "  - continue/*                        (pick config.agent.yaml or config.safe.yaml -> ~/.continue/config.yaml)"
+echo "  - make/Makefile.*                   (per-project build templates)"
+echo "  - vscode/linux/settings.json.linux  (per-project LaTeX workspace settings, pair with make/Makefile.latex - copy to <project>/.vscode/settings.json)"
+echo "  - vscode/mac/settings.json.mac      (same, for macOS LaTeX projects)"
+echo "  - wallpapers/                       (set via your DE's wallpaper tool)"
 echo
 
 if [ "$BACKED_UP" -eq 1 ]; then

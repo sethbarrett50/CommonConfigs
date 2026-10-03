@@ -27,10 +27,12 @@ A few things need a manual step afterward — see [Not automated](#not-automated
 | `rofi/config.rasi`, `rofi/tokyo-neon.rasi` | Rofi launcher, Tokyo Night themed | `~/.config/rofi/` |
 | `mpd/mpd.conf` | Music Player Daemon | `~/.config/mpd/mpd.conf` |
 | `ncmpcpp/config` | ncmpcpp (mpd client) | `~/.config/ncmpcpp/config` |
-| `vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac`, `vscode/argv.json` | VS Code | `settings.json` (OS-appropriate), `argv.json` |
+| `vscode/settings.json` | VS Code, global user settings | `settings.json` |
+| `vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac` | VS Code, LaTeX project settings | manual, see below |
 | `continue/*` | [Continue](https://continue.dev) VS Code extension | manual, see below |
 | `make/Makefile.*` | Per-project Makefile templates | manual, copy into a project |
 | `wallpapers/` | Desktop wallpapers | manual, set via your DE |
+| `gtk-theme/apply-tokyonight-theme.sh` | GTK3/GTK4/GNOME Shell theme | run directly (see below) |
 
 ### Terminal theme
 
@@ -47,6 +49,28 @@ bash gnome-terminal/tokyo-night-apply.sh   # creates/updates a "Tokyo Night" pro
 changes. It needs `JetBrainsMono Nerd Font` for the prompt's icons; without
 it, it falls back to plain `JetBrains Mono`.
 
+### System-wide GTK/Shell theme
+
+`gtk-theme/apply-tokyonight-theme.sh` installs and applies
+[Tokyonight-GTK-Theme](https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme)
+(purple accent, dark variant) system-wide — GTK3, GTK4/libadwaita apps, window
+chrome, and the GNOME Shell top panel (via the "User Themes" extension). This
+is what actually colors app title bars/menus/dialogs outside the terminal;
+`gnome-terminal/tokyo-night-apply.sh`'s `gtk.css` block only targets the
+terminal specifically and still applies on top (it's at user priority, so it
+always wins over whatever this theme does for those same elements).
+
+```bash
+bash gtk-theme/apply-tokyonight-theme.sh
+```
+
+Installs packages via `apt` (needs `sudo`), clones the upstream theme repo to
+`~/.cache/tokyonight-gtk-theme-src`, and re-running just re-pulls/re-applies.
+If the Shell panel doesn't pick up the theme on the first run, the "User
+Themes" extension was likely just installed and the running Shell hasn't
+rescanned for it yet — reload the Shell (`Alt+F2`, `r`, Enter on X11; log out
+and back in on Wayland) and re-run the script.
+
 ### Not automated
 
 A few configs aren't symlinked by `install.sh` because they need a choice
@@ -60,6 +84,10 @@ A few configs aren't symlinked by `install.sh` because they need a choice
   Svelte) — copy the ones you want into `~/.continue/rules/`.
 - **`make/Makefile.*`** — per-project build file templates (LaTeX, Python,
   Svelte, generic shell). Copy the relevant one into a project as `Makefile`.
+- **`vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac`** —
+  LaTeX-Workshop *workspace* settings (not global), pointed at the matching
+  OS's toolchain paths, meant to pair with `make/Makefile.latex`. Copy the
+  OS-appropriate one into a LaTeX project as `.vscode/settings.json`.
 - **`wallpapers/`** — set through whatever your desktop environment uses
   (e.g. `nitrogen`, `feh`, or GNOME Settings).
 
