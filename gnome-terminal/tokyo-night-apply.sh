@@ -105,14 +105,23 @@ fi
 
 cat >> "$GTK_CSS" <<CSS
 $MARK_BEGIN
-.terminal-window headerbar {
+headerbar.titlebar {
     background-color: #0b1026;
     background-image: none;
     color: #c0caf5;
     box-shadow: none;
 }
-.terminal-window headerbar button {
+headerbar.titlebar button {
+    background-color: transparent;
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
     color: #c0caf5;
+}
+header.top {
+    background-color: #0b1026;
+    background-image: none;
+    box-shadow: none;
 }
 $MARK_END
 CSS
