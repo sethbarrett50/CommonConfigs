@@ -27,7 +27,8 @@ A few things need a manual step afterward — see [Not automated](#not-automated
 | `rofi/config.rasi`, `rofi/tokyo-neon.rasi` | Rofi launcher, Tokyo Night themed | `~/.config/rofi/` |
 | `mpd/mpd.conf` | Music Player Daemon | `~/.config/mpd/mpd.conf` |
 | `ncmpcpp/config` | ncmpcpp (mpd client) | `~/.config/ncmpcpp/config` |
-| `vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac`, `vscode/argv.json` | VS Code | `settings.json` (OS-appropriate), `argv.json` |
+| `vscode/settings.json` | VS Code, global user settings | `settings.json` |
+| `vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac` | VS Code, LaTeX project settings | manual, see below |
 | `continue/*` | [Continue](https://continue.dev) VS Code extension | manual, see below |
 | `make/Makefile.*` | Per-project Makefile templates | manual, copy into a project |
 | `wallpapers/` | Desktop wallpapers | manual, set via your DE |
@@ -60,6 +61,10 @@ A few configs aren't symlinked by `install.sh` because they need a choice
   Svelte) — copy the ones you want into `~/.continue/rules/`.
 - **`make/Makefile.*`** — per-project build file templates (LaTeX, Python,
   Svelte, generic shell). Copy the relevant one into a project as `Makefile`.
+- **`vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac`** —
+  LaTeX-Workshop *workspace* settings (not global), pointed at the matching
+  OS's toolchain paths, meant to pair with `make/Makefile.latex`. Copy the
+  OS-appropriate one into a LaTeX project as `.vscode/settings.json`.
 - **`wallpapers/`** — set through whatever your desktop environment uses
   (e.g. `nitrogen`, `feh`, or GNOME Settings).
 
