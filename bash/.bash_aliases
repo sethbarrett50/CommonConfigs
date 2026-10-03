@@ -116,7 +116,7 @@ alias please='sudo $(history -p !!)'
 
 # Make a directory and cd into it
 mkcd() {
-    mkdir -p -- "$1" && cd -- "$1"
+    mkdir -p -- "$1" && cd -- "$1" || return
 }
 
 # Extract most common archive formats
@@ -185,7 +185,7 @@ repo() {
     if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
         cd "$(git rev-parse --show-toplevel)" || return
     else
-        local project_root="~/code"
+        local project_root="$HOME/code"
         local selected
 
         selected=$(find "${project_root:-.}" -maxdepth 2 -name ".git" -type d | \
