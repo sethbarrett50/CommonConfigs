@@ -112,6 +112,10 @@ headerbar.titlebar {
     box-shadow: none;
 }
 headerbar.titlebar button {
+    background-color: transparent;
+    background-image: none;
+    border-color: transparent;
+    box-shadow: none;
     color: #c0caf5;
 }
 $MARK_END
