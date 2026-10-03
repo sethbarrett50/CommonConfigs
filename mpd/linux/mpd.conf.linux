@@ -10,8 +10,8 @@ follow_outside_symlinks "yes"
 follow_inside_symlinks "yes"
 
 audio_output {
- type "osx"
- name "CoreAudio"
+ type "pulse"
+ name "PulseAudio"
  mixer_type "software"
 }
 
@@ -22,7 +22,6 @@ decoder {
 
 bind_to_address "127.0.0.1"
 port "6600"
-user "sebarrett"
 
 # Visualizer
 audio_output {
@@ -32,4 +31,5 @@ audio_output {
  format "44100:16:2"
  auto_resample "no"
  use_mmap "yes"
+ buffer_time "100000"
 }

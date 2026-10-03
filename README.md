@@ -25,7 +25,7 @@ A few things need a manual step afterward — see [Not automated](#not-automated
 | `i3/config` | i3 window manager | `~/.config/i3/config` |
 | `picom/picom.conf` | Picom compositor | `~/.config/picom/picom.conf` |
 | `rofi/config.rasi`, `rofi/tokyo-neon.rasi` | Rofi launcher, Tokyo Night themed | `~/.config/rofi/` |
-| `mpd/mpd.conf` | Music Player Daemon | `~/.config/mpd/mpd.conf` |
+| `mpd/linux/mpd.conf.linux`, `mpd/mac/mpd.conf.mac` | Music Player Daemon, OS-appropriate audio output | `~/.config/mpd/mpd.conf` |
 | `ncmpcpp/config` | ncmpcpp (mpd client) | `~/.config/ncmpcpp/config` |
 | `vscode/settings.json` | VS Code, global user settings | `settings.json` |
 | `vscode/linux/settings.json.linux`, `vscode/mac/settings.json.mac` | VS Code, LaTeX project settings | manual, see below |
