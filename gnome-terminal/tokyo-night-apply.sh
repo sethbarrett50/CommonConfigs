@@ -34,10 +34,22 @@ find_existing_uuid() {
     return 1
 }
 
+gen_uuid() {
+    if command -v uuidgen >/dev/null 2>&1; then
+        uuidgen
+    elif [ -r /proc/sys/kernel/random/uuid ]; then
+        cat /proc/sys/kernel/random/uuid
+    elif command -v python3 >/dev/null 2>&1; then
+        python3 -c 'import uuid; print(uuid.uuid4())'
+    else
+        od -An -N16 -tx1 /dev/urandom | tr -d ' \n' | sed -E 's/(.{8})(.{4})(.{4})(.{4})(.{12})/\1-\2-\3-\4-\5/'
+    fi
+}
+
 if UUID=$(find_existing_uuid); then
     echo "Updating existing '$PROFILE_NAME' profile ($UUID)..."
 else
-    UUID=$(uuidgen)
+    UUID=$(gen_uuid)
     echo "Creating new '$PROFILE_NAME' profile ($UUID)..."
     CURRENT_LIST=$(gsettings get org.gnome.Terminal.ProfilesList list)
     if [ "$CURRENT_LIST" = "@as []" ] || [ "$CURRENT_LIST" = "[]" ]; then
