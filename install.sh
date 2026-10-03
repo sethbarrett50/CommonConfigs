@@ -41,8 +41,9 @@ case "$(uname -s)" in
         link "$REPO_DIR/vscode/settings.json" "$HOME/.config/Code/User/settings.json"
         if command -v gsettings >/dev/null 2>&1; then
             echo
-            echo "GNOME Terminal detected - run this separately to install the Tokyo Night profile:"
-            echo "  bash $REPO_DIR/gnome-terminal/tokyo-night-apply.sh"
+            echo "GNOME Terminal detected - run these separately (installs packages, needs sudo):"
+            echo "  bash $REPO_DIR/gnome-terminal/tokyo-night-apply.sh   # terminal profile + starship"
+            echo "  bash $REPO_DIR/gtk-theme/apply-tokyonight-theme.sh  # system-wide GTK/Shell theme"
         fi
         ;;
     Darwin*)

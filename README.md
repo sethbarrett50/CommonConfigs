@@ -32,6 +32,7 @@ A few things need a manual step afterward — see [Not automated](#not-automated
 | `continue/*` | [Continue](https://continue.dev) VS Code extension | manual, see below |
 | `make/Makefile.*` | Per-project Makefile templates | manual, copy into a project |
 | `wallpapers/` | Desktop wallpapers | manual, set via your DE |
+| `gtk-theme/apply-tokyonight-theme.sh` | GTK3/GTK4/GNOME Shell theme | run directly (see below) |
 
 ### Terminal theme
 
@@ -47,6 +48,28 @@ bash gnome-terminal/tokyo-night-apply.sh   # creates/updates a "Tokyo Night" pro
 `tokyo-night-apply.sh` is idempotent — re-run it any time to pick up palette
 changes. It needs `JetBrainsMono Nerd Font` for the prompt's icons; without
 it, it falls back to plain `JetBrains Mono`.
+
+### System-wide GTK/Shell theme
+
+`gtk-theme/apply-tokyonight-theme.sh` installs and applies
+[Tokyonight-GTK-Theme](https://github.com/Fausto-Korpsvart/Tokyonight-GTK-Theme)
+(purple accent, dark variant) system-wide — GTK3, GTK4/libadwaita apps, window
+chrome, and the GNOME Shell top panel (via the "User Themes" extension). This
+is what actually colors app title bars/menus/dialogs outside the terminal;
+`gnome-terminal/tokyo-night-apply.sh`'s `gtk.css` block only targets the
+terminal specifically and still applies on top (it's at user priority, so it
+always wins over whatever this theme does for those same elements).
+
+```bash
+bash gtk-theme/apply-tokyonight-theme.sh
+```
+
+Installs packages via `apt` (needs `sudo`), clones the upstream theme repo to
+`~/.cache/tokyonight-gtk-theme-src`, and re-running just re-pulls/re-applies.
+If the Shell panel doesn't pick up the theme on the first run, the "User
+Themes" extension was likely just installed and the running Shell hasn't
+rescanned for it yet — reload the Shell (`Alt+F2`, `r`, Enter on X11; log out
+and back in on Wayland) and re-run the script.
 
 ### Not automated
 
