@@ -14,3 +14,7 @@ updates:
       - "infra"
     cooldown:
       default-days: 14
+    groups:
+      github-actions:
+        patterns:
+          - "*"
